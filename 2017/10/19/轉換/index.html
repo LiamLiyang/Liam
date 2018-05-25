@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="使用python的datetime做時間比較時，報錯1TypeError: can&amp;apos;t compare offset-naive and offset-aware datetimes 这是因为两个时间不属于同一类型，offset-naive是不含时区的类型，而offset-aware是有时区类型，两者自然不能比较。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-10-19T08:05:52.866Z">
+<meta property="og:updated_time" content="2017-10-19T09:19:25.395Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="offset-aware与offset-navie轉換">
 <meta name="twitter:description" content="使用python的datetime做時間比較時，報錯1TypeError: can&amp;apos;t compare offset-naive and offset-aware datetimes 这是因为两个时间不属于同一类型，offset-naive是不含时区的类型，而offset-aware是有时区类型，两者自然不能比较。">
@@ -415,14 +415,7 @@
 <h1 id="tzinfo-屬性"><a href="#tzinfo-屬性" class="headerlink" title="tzinfo 屬性"></a>tzinfo 屬性</h1><p>我们可以通过判断datetime对象的tzinfo属性，来获悉他是何种类型<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">Python <span class="number">3.4</span><span class="number">.3</span> (v3<span class="number">.4</span><span class="number">.3</span>:<span class="number">9</span>b73f1c3e601, Feb <span class="number">24</span> <span class="number">2015</span>, <span class="number">22</span>:<span class="number">43</span>:<span class="number">06</span>) [MSC v<span class="number">.1600</span> <span class="number">32</span> bit (In</div><div class="line">tel)] on win32</div><div class="line">Type <span class="string">"help"</span>, <span class="string">"copyright"</span>, <span class="string">"credits"</span> <span class="keyword">or</span> <span class="string">"license"</span> <span class="keyword">for</span> more information.</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> datetime</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now = datetime.datetime.now()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now</div><div class="line">datetime.datetime(<span class="number">2017</span>, <span class="number">10</span>, <span class="number">19</span>, <span class="number">15</span>, <span class="number">55</span>, <span class="number">9</span>, <span class="number">457974</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now.tzinfo</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now.tzinfo == <span class="keyword">None</span></div><div class="line"><span class="keyword">True</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure></p>
 <p>tzinfo == None 為True時datetime為offset-naive，就是一個不含時區的datetime</p>
 <h1 id="tzinfo轉換"><a href="#tzinfo轉換" class="headerlink" title="tzinfo轉換"></a>tzinfo轉換</h1><p>將offset-naive 轉換為 offset-aware<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> pytz</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now = now.replace(tzinfo=pytz.timezone(<span class="string">'UTC'</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now</div><div class="line">datetime.datetime(<span class="number">2017</span>, <span class="number">10</span>, <span class="number">19</span>, <span class="number">15</span>, <span class="number">55</span>, <span class="number">9</span>, <span class="number">457974</span>, tzinfo=&lt;UTC&gt;)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now.tzinfo == <span class="keyword">None</span></div><div class="line"><span class="keyword">False</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now.tzinfo</div><div class="line">&lt;UTC&gt;</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure></p>
-<p>offset-aware 轉換 offset-naive<br>``` python</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>import pytz<br>now = now.replace(tzinfo=None)<br>now<br>datetime.datetime(2017, 10, 19, 15, 55, 9, 457974)<br>now.tzinfo == None<br>True<br>now.tzinfo</p>
-</blockquote>
-</blockquote>
-</blockquote>
+<p>offset-aware 轉換 offset-naive<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> pytz</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now = now.replace(tzinfo=<span class="keyword">None</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now</div><div class="line">datetime.datetime(<span class="number">2017</span>, <span class="number">10</span>, <span class="number">19</span>, <span class="number">15</span>, <span class="number">55</span>, <span class="number">9</span>, <span class="number">457974</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now.tzinfo == <span class="keyword">None</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>now.tzinfo</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -462,6 +455,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/02/模塊/" rel="prev" title="數據處理函數及模塊">
+                數據處理函數及模塊 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -542,7 +539,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -553,7 +550,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -564,7 +561,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -651,7 +648,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

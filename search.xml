@@ -1,9 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title></title>
+    <url>%2F2018%2F05%2F24%2Fmysql%E5%AF%BC%E5%87%BA%E5%91%BD%E4%BB%A4%2F</url>
+    <content type="text"><![CDATA[导出所有表结构 $ mysqldump -uuser1 -pBeaconuser1! -d db_smt2&gt; db_smt2.sql]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[Mysql 主从复制配置]]></title>
+    <url>%2F2018%2F05%2F16%2Fmysql%E4%B8%BB%E4%BB%8E%2F</url>
+    <content type="text"><![CDATA[mysql主(master)从(slave)复制就是一个两个mysql的同步数据的过程，主库更新后会发送更新事件到从库，从库读取更新记录并更新记录。 环境Linux: Centos7Mysql: 5.7master:10.137.4.7slave:10.137.4.8 安装mysql下载mysql这里我下载的是npmMySQL官网下载链接 卸载Linux自带的Mysql先要卸载掉已安装的mysql,不然会报错12345# 查看已安装的mysql$rpm -qa | grep mysql # 如果未返回则没有默认安装mysql-libs-5.1.73-5.el6_6.x86_64# 卸载$yum -y remove mysql-libs 安装需要Common、libs、client、server、devel 五个文件按以上方五个文件的顺序依次安装rpm包,因为包之间的依赖关系。1$rpm -ivh mysql-community-client-5.7.22-1.el7.x86_64.rpm.rpm 这里可能回报错,由于Linux原因有的默认使用的数据库是mariadb(mysql 的一个分支)。按照上方的卸载方法，卸载掉就好了。123456$rpm -ivh mysql-community-client-5.7.22-1.el7.x86_64.rpm.rpmwarning: mysql-community-common-5.7.22-1.el7.x86_64.rpm: Header V3 DSA/SHA1 Signature, key ID 5072e1f5: NOKEYPreparing... ################################# [100%] file /usr/share/mysql/czech/errmsg.sys from install of mysql-community-common-5.7.22-1.el7.x86_64 conflicts with file from package mariadb-libs-1:5.5.44-2.el7.centos.x86_64 $yum -y remove mariadb-libs-1:5.5.44-2.el7.centos.x86_64 配置关闭防火墙123456789101112131415161718$ firewall-cmd --state ##查看防火墙状态running ##防火墙开启$ systemctl stop firewalld ##关闭防火墙$ firewall-cmd --statenot running ##防火墙关闭$ systemctl start firewalld.service # 开启$ systemctl status firewalld.service #● firewalld.service - firewalld - dynamic firewall daemon Loaded: loaded (/usr/lib/systemd/system/firewalld.service; disabled; vendor preset: enabled) Active: active (running) since Tue 2018-05-22 10:15:13 CST; 31min ago Docs: man:firewalld(1) Main PID: 9422 (firewalld) CGroup: /system.slice/firewalld.service └─9422 /usr/bin/python -Es /usr/sbin/firewalld --nofork --nopid 修改mysql配置文件主从服务器都要配置,server_id为唯一的不可重复1234567891011$vi /etc/my.cnf[mysqld]log-bin=mysql-bin server_id=128binlog-ignore-db = mysqlbinlog-ignore-db = information_schemabinlog-ignore-db = performance_schemareplicate-wild-ignore-table = mysql.%replicate-wild-igno#退出后重启$service mysqld restart 主从复制master(10.137.4.7)创建用户123456789101112131415161718192021222324252627282930#查看临时密码$ grep password /var/log/mysqld.log2018-05-15T05:46:03.804945Z 1 [Note] A temporary password is generated for root@localhost: iAegj2o.4J70#登陆mysql$ mysql -p:iAegj2o.4J70# 修改root密码mysql&gt; set password = password(&quot;Liam123!&quot;);Query OK, 0 rows affected, 1 warning (0.00 sec)# 创建账号mysql&gt; create user &apos;test1&apos;@&apos;10.137.4.8&apos; identified by &apos;Liam123!&apos;;# 赋予 REPLICATION SLAVE 权限mysql&gt; grant replication slave on *.* to &apos;test&apos;@&apos;10.137.4.8&apos;;## 查看用户mysql&gt; select user,host from mysql.user;## 查看 master 状态mysql&gt; show master status;+------------------+----------+--------------+---------------------------------------------+-------------------+| File | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |+------------------+----------+--------------+---------------------------------------------+-------------------+| mysql-bin.000025 | 860 | | mysql,information_schema,performance_schema | |+------------------+----------+--------------+---------------------------------------------+-------------------+1 row in set (0.00 sec) 拷贝master数据1$ mysqldump -u root -p --all-databases --master-data &gt; all.sql slave(10.137.4.8)将all.sql拷贝到 slave 下执行1$ mysql -uroot -p &lt; all.sql 建立主从连接12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970mysql&gt; change master to -&gt; master_host=&apos;10.137.4.7&apos;, -&gt; master_user=&apos;test&apos;, -&gt; master_password=&apos;Liam123!&apos;, -&gt; master_log_file=&apos;mysql-bin.000025&apos;, # 主服务master 状态中获取 -&gt; master_log_pos=860; # 主服务master 状态中获取 mysql&gt; start slave; # 开启同步mysql&gt; show slave status \G # 查看同步配置信息*************************** 1. row *************************** Slave_IO_State: Waiting for master to send event Master_Host: 10.137.4.7 Master_User: test Master_Port: 3306 Connect_Retry: 60 Master_Log_File: mysql-binlog.000025 Read_Master_Log_Pos: 860 Relay_Log_File: foc-lh-dbs-mysql1-relay-bin.000002 Relay_Log_Pos: 1024 Relay_Master_Log_File: mysql-binlog.000025 Slave_IO_Running: Yes Slave_SQL_Running: Yes Replicate_Do_DB: Replicate_Ignore_DB: Replicate_Do_Table: Replicate_Ignore_Table: Replicate_Wild_Do_Table: Replicate_Wild_Ignore_Table: mysql.%replicate-wild-igno Last_Errno: 0 Last_Error: Skip_Counter: 0 Exec_Master_Log_Pos: 860 Relay_Log_Space: 1243 Until_Condition: None Until_Log_File: Until_Log_Pos: 0 Master_SSL_Allowed: No Master_SSL_CA_File: Master_SSL_CA_Path: Master_SSL_Cert: Master_SSL_Cipher: Master_SSL_Key: Seconds_Behind_Master: 0Master_SSL_Verify_Server_Cert: No Last_IO_Errno: 0 Last_IO_Error: Last_SQL_Errno: 0 Last_SQL_Error: Replicate_Ignore_Server_Ids: Master_Server_Id: 1 Master_UUID: f303ed33-5815-11e8-b557-fa163ee5f93f Master_Info_File: /var/lib/mysql/master.info SQL_Delay: 0 SQL_Remaining_Delay: NULL Slave_SQL_Running_State: Slave has read all relay log; waiting for more updates Master_Retry_Count: 86400 Master_Bind: Last_IO_Error_Timestamp: Last_SQL_Error_Timestamp: Master_SSL_Crl: Master_SSL_Crlpath: Retrieved_Gtid_Set: Executed_Gtid_Set: Auto_Position: 0 Replicate_Rewrite_DB: Channel_Name: Master_TLS_Version: 1 row in set (0.01 sec ps: Slave_IO_Running,Slave_SQL_Running 都要为Yes,如果错误则查看Last_IO_Error中的错误. 测试检查是否成功。在master下新建库和表，看下是否在slave下出现.]]></content>
+      <categories>
+        <category>Mysql集群</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Mysql 多主一从搭建]]></title>
+    <url>%2F2018%2F05%2F16%2Fmysql%E5%A4%9A%E4%B8%BB%E4%B8%80%E4%BB%8E%2F</url>
+    <content type="text"><![CDATA[多主一从搭建 按照主主搭建好环境 新增一台Slavemaster:10.137.4.7master:10.137.4.8slave:10.137.4.9 10.137.4.9修改/etc/my.cof12345[mysqld]server-id = 2relay_log_info_repository = TABLEmaster_info_repository = TABLErelay_log_recovery = on 设置mysql master12345mysql&gt; change master to master_host=&apos;10.137.4.7&apos;, master_user=&apos;test&apos;, master_password=&apos;Liam123!&apos;, master_log_file=&apos;mysql-bin.000025&apos;, master_log_pos=860 for channel &apos;master_1&apos;;mysql&gt; change master to master_host=&apos;10.137.4.8&apos;, master_user=&apos;test&apos;, master_password=&apos;Liam123!&apos;, master_log_file=&apos;mysql-bin.000001&apos;, master_log_pos=123 for channel &apos;master_2&apos;;# 查看mysql&gt; select * from mysql.slave_master_info;]]></content>
+      <categories>
+        <category>Mysql集群</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Scrapy 碰壁汇总]]></title>
+    <url>%2F2018%2F05%2F16%2Fscrapy%2F</url>
+    <content type="text"><![CDATA[本文是汇总Scrapy安装到使用碰到的问题和解决方案。 Twisted包报错问题版本及系统问题导致Twisted无法安装12345678910$ pip install scrapy....rds\xish running build_ext building &apos;twisted.test.raiser&apos; extension error: Microsoft Visual C++ 10.0 is required (Unable to find vcvarsall.bat). ---------------------------------------- Failed building wheel for Twisted Running setup.py clean for Twisted 解决方案去python 第三方包的网站python包手动安装,64位的windows下载64位的包可能还是会报错，可以下载32位的包尝试下(我下的:Twisted-18.4.0-cp34-cp34m-win32.whl) 未设置代理问题因为网络受限无法访问到页面，导致无法爬取页面信息12018-05-19 16:28:53 [scrapy.core.scraper] ERROR: Error downloading &lt;GET https://www.jianshu.com/&gt;: Could not open CONNECT tunnel with proxy 10.191.131.156:3128 [&#123;&apos;status&apos;: 407, &apos;reason&apos;: b&apos;Proxy Authentication Required&apos;&#125;] 解决方案给项目添加代理 编辑middlewares.py,新增下方代码12345678class MyProxiesSpiderMiddleware(object): &quot;&quot;&quot; 代理 &quot;&quot;&quot; def process_request(self, request, spider): request.meta[&quot;proxy&quot;] = &apos;你的代理&apos; settings.py 文件中,新增下方代码1234567# 模拟浏览器访问USER_AGENT = &apos;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36&apos;# 数字貌似跟执行顺序有关DOWNLOADER_MIDDLEWARES = &#123; &apos;tutorial.middlewares.MyProxiesSpiderMiddleware&apos;: 543,&#125; 从新执行1234567&gt; scrapy crawl dmoz....2018-05-19 17:10:09 [scrapy.core.engine] INFO: Spider opened2018-05-19 17:10:09 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)2018-05-19 17:10:09 [scrapy.extensions.telnet] DEBUG: Telnet console listening on 127.0.0.1:60232018-05-19 17:10:10 [scrapy.core.engine] DEBUG: Crawled (200) &lt;GET https://www.jianshu.com/&gt; (referer: None)... 访问成功！ ps: requests模块代理报错123456789&gt; import requests&gt; img_url = &apos;https://cdn2.jianshu.io/assets/web/nav-logo-4c7bbafe27adc892f3046e6978459bac.png&apos;&gt; requests.get(img_url)requests.exceptions.ConnectionError: HTTPSConnectionPool(host=&apos;cdn2.jianshu.io&apos;, port=443): Max retries exceeded with url: /assets/web/nav-logo-4c7bbafe27adc892f3046e6978459bac.png (Caused by NewConnectionError(&apos;&lt;urllib3.connection.VerifiedHTTPSConnection object at 0x0399F870&gt;: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。&apos;,))# 添加代理&gt; proxies = &#123;&apos;http&apos;: &apos;x.x.x.x&apos;,&apos;https&apos;: &apos;x.x.x.x&apos;&#125;&gt; requests.get(url=img_url,proxies=proxies)&lt;Response [200]&gt;]]></content>
+      <categories>
+        <category>筆記</category>
+      </categories>
+      <tags>
+        <tag>爬虫</tag>
+        <tag>Python</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Mysql 互为主从搭建]]></title>
+    <url>%2F2018%2F05%2F16%2Fmysql%E4%B8%BB%E4%B8%BB%E5%90%8C%E6%AD%A5%2F</url>
+    <content type="text"><![CDATA[两台Mysql互相同步、互为主从 本篇基于已经看完主从复制文章基础,再进行下一部分的搭建 配置slave(10.137.4.8)查看master状态123456789$ mysql -pmysql&gt; show master status;+------------------+----------+--------------+---------------------------------------------+-------------------+| File | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |+------------------+----------+--------------+---------------------------------------------+-------------------+| mysql-bin.000001 | 123 | | mysql,information_schema,performance_schema | |+------------------+----------+--------------+---------------------------------------------+-------------------+1 row in set (0.00 sec) master(10.137.4.7)建立主从连接12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970mysql&gt; change master to -&gt; master_host=&apos;10.137.4.8&apos;, -&gt; master_user=&apos;test&apos;, -&gt; master_password=&apos;Liam123!&apos;, -&gt; master_log_file=&apos;mysql-bin.000001&apos;, # 10.137.4.8 master 状态中获取 -&gt; master_log_pos=123; # 10.137.4.8 master 状态中获取 mysql&gt; start slave; # 开启同步mysql&gt; show slave status \G # 查看同步配置信息*************************** 1. row *************************** Slave_IO_State: Waiting for master to send event Master_Host: 10.137.4.8 Master_User: test Master_Port: 3306 Connect_Retry: 60 Master_Log_File: mysql-binlog.000001 Read_Master_Log_Pos: 123 Relay_Log_File: foc-lh-dbs-mysql1-relay-bin.000002 Relay_Log_Pos: 1024 Relay_Master_Log_File: mysql-binlog.000001 Slave_IO_Running: Yes Slave_SQL_Running: Yes Replicate_Do_DB: Replicate_Ignore_DB: Replicate_Do_Table: Replicate_Ignore_Table: Replicate_Wild_Do_Table: Replicate_Wild_Ignore_Table: mysql.%replicate-wild-igno Last_Errno: 0 Last_Error: Skip_Counter: 0 Exec_Master_Log_Pos: 123 Relay_Log_Space: 1243 Until_Condition: None Until_Log_File: Until_Log_Pos: 0 Master_SSL_Allowed: No Master_SSL_CA_File: Master_SSL_CA_Path: Master_SSL_Cert: Master_SSL_Cipher: Master_SSL_Key: Seconds_Behind_Master: 0Master_SSL_Verify_Server_Cert: No Last_IO_Errno: 0 Last_IO_Error: Last_SQL_Errno: 0 Last_SQL_Error: Replicate_Ignore_Server_Ids: Master_Server_Id: 1 Master_UUID: f303ed33-5815-11e8-b557-fa163ee5f93f Master_Info_File: /var/lib/mysql/master.info SQL_Delay: 0 SQL_Remaining_Delay: NULL Slave_SQL_Running_State: Slave has read all relay log; waiting for more updates Master_Retry_Count: 86400 Master_Bind: Last_IO_Error_Timestamp: Last_SQL_Error_Timestamp: Master_SSL_Crl: Master_SSL_Crlpath: Retrieved_Gtid_Set: Executed_Gtid_Set: Auto_Position: 0 Replicate_Rewrite_DB: Channel_Name: Master_TLS_Version: 1 row in set (0.01 sec]]></content>
+      <categories>
+        <category>Mysql集群</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[开发环境搭建]]></title>
+    <url>%2F2018%2F05%2F04%2Flinux%20%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%2F</url>
+    <content type="text"><![CDATA[#]]></content>
+      <categories>
+        <category>筆記</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[數據處理函數及模塊]]></title>
+    <url>%2F2018%2F01%2F02%2F%E6%A8%A1%E5%A1%8A%2F</url>
+    <content type="text"><![CDATA[記錄一些模塊使用方法 heapq 模塊具體作用不知道，可用於列表值的大小排序同sorted方法,sort方法 sorted,sort 用法sort直接改變列表，sorted 重新生成123456789101112# List按小到大排序result = [2, 1, 3, 5, 6, 4]sor = sorted(result)&gt;&gt; [1, 2, 3, 4, 5, 6]result.sort()&gt;&gt; [1, 2, 3, 4, 5, 6]# 從大到小排序x = sorted(result, reverse=True)&gt;&gt; [6, 5, 4, 3, 2, 1]result.sort(reverse=True)&gt;&gt; [6, 5, 4, 3, 2, 1] 使用heapqheapq 模块有两个函数：nlargest() 和 nsmallest()123456789import heapq#nlargest(n, iterable, key=None)nums = [1, 8, 2, 23, 7, -4, 18, 23, 42, 37, 2]# 查找数据集中的n个最大元素heapq.nlargest(3, nums) &gt;&gt; [42, 37, 23]# 查找数据集中的n个最小元素heapq.nsmallest(3, nums)&gt;&gt; [-4, 1, 2] collections 模塊defaultdict這裡是函數的詳情 会自动为将要访问的键（就算目前字典中并不存在这样的键）创建映射实体這樣就不會報出 KeyError:1234import collectionsd = collections.defaultdict(list)d['1'].append(1)&gt;&gt; defaultdict(&lt;class 'int'&gt;, &#123;'1': [1]&#125;) setdefault這裡是函數的詳情 給不存在的鍵設置一個默認值,不會改變已有鍵1234567891011d = &#123;&#125;d.setdefault('a', [])&gt;&gt; &#123;'a': []&#125;d['z'] = ''d.setdefault('z', [])&gt;&gt; &#123;'1': ''&#125;d = defaultdict(list)for key, value in pairs: d[key].append(value) Counter統計序列中出現次數最多的元素1234import rewith open('C:/Users/F1330292/Desktop/e.txt') as f: word = collections.Counter(re.findall('\w+', f.read())) word.most_common(5)]]></content>
+      <categories>
+        <category>工作問題</category>
+      </categories>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[offset-aware与offset-navie轉換]]></title>
     <url>%2F2017%2F10%2F19%2F%E8%BD%89%E6%8F%9B%2F</url>
-    <content type="text"><![CDATA[使用python的datetime做時間比較時，報錯1TypeError: can&apos;t compare offset-naive and offset-aware datetimes 这是因为两个时间不属于同一类型，offset-naive是不含时区的类型，而offset-aware是有时区类型，两者自然不能比较。 tzinfo 屬性我们可以通过判断datetime对象的tzinfo属性，来获悉他是何种类型1234567891011Python 3.4.3 (v3.4.3:9b73f1c3e601, Feb 24 2015, 22:43:06) [MSC v.1600 32 bit (Intel)] on win32Type "help", "copyright", "credits" or "license" for more information.&gt;&gt;&gt; import datetime&gt;&gt;&gt; now = datetime.datetime.now()&gt;&gt;&gt; nowdatetime.datetime(2017, 10, 19, 15, 55, 9, 457974)&gt;&gt;&gt; now.tzinfo&gt;&gt;&gt; now.tzinfo == NoneTrue&gt;&gt;&gt; tzinfo == None 為True時datetime為offset-naive，就是一個不含時區的datetime tzinfo轉換將offset-naive 轉換為 offset-aware123456789&gt;&gt;&gt; import pytz&gt;&gt;&gt; now = now.replace(tzinfo=pytz.timezone('UTC'))&gt;&gt;&gt; nowdatetime.datetime(2017, 10, 19, 15, 55, 9, 457974, tzinfo=&lt;UTC&gt;)&gt;&gt;&gt; now.tzinfo == NoneFalse&gt;&gt;&gt; now.tzinfo&lt;UTC&gt;&gt;&gt;&gt; offset-aware 轉換 offset-naive``` python import pytznow = now.replace(tzinfo=None)nowdatetime.datetime(2017, 10, 19, 15, 55, 9, 457974)now.tzinfo == NoneTruenow.tzinfo]]></content>
+    <content type="text"><![CDATA[使用python的datetime做時間比較時，報錯1TypeError: can&apos;t compare offset-naive and offset-aware datetimes 这是因为两个时间不属于同一类型，offset-naive是不含时区的类型，而offset-aware是有时区类型，两者自然不能比较。 tzinfo 屬性我们可以通过判断datetime对象的tzinfo属性，来获悉他是何种类型1234567891011Python 3.4.3 (v3.4.3:9b73f1c3e601, Feb 24 2015, 22:43:06) [MSC v.1600 32 bit (Intel)] on win32Type "help", "copyright", "credits" or "license" for more information.&gt;&gt;&gt; import datetime&gt;&gt;&gt; now = datetime.datetime.now()&gt;&gt;&gt; nowdatetime.datetime(2017, 10, 19, 15, 55, 9, 457974)&gt;&gt;&gt; now.tzinfo&gt;&gt;&gt; now.tzinfo == NoneTrue&gt;&gt;&gt; tzinfo == None 為True時datetime為offset-naive，就是一個不含時區的datetime tzinfo轉換將offset-naive 轉換為 offset-aware123456789&gt;&gt;&gt; import pytz&gt;&gt;&gt; now = now.replace(tzinfo=pytz.timezone('UTC'))&gt;&gt;&gt; nowdatetime.datetime(2017, 10, 19, 15, 55, 9, 457974, tzinfo=&lt;UTC&gt;)&gt;&gt;&gt; now.tzinfo == NoneFalse&gt;&gt;&gt; now.tzinfo&lt;UTC&gt;&gt;&gt;&gt; offset-aware 轉換 offset-naive12345678&gt;&gt;&gt; import pytz&gt;&gt;&gt; now = now.replace(tzinfo=None)&gt;&gt;&gt; nowdatetime.datetime(2017, 10, 19, 15, 55, 9, 457974)&gt;&gt;&gt; now.tzinfo == NoneTrue&gt;&gt;&gt; now.tzinfo&gt;&gt;&gt;]]></content>
       <categories>
         <category>日常</category>
       </categories>
@@ -49,7 +125,7 @@
   <entry>
     <title><![CDATA[获取本月日期]]></title>
     <url>%2F2017%2F06%2F09%2F%E6%97%B6%E9%97%B4%E5%A4%84%E7%90%86%2F</url>
-    <content type="text"><![CDATA[获取本月的所有日期 获取本月日期获取本月一号的时间12345import datetimetoDay = datetime.date.today() #获取当前日期day = toDay.replace(year=2017,month=1,day=1) # 获取2017-1-1thisDay = toDay.replace(day=1) # 获取本月一号 获取本月月底日期12date = datetime.date.today().replace(month=toDay.month+1,day=1) #下個月一號lastDay = date-datetime.timedelta(1) # 下個月一號 減一天 日期列表1234567891011toDay = dt.date.today() #獲取日期if toDay.month &lt; 12: #如果當前月份等於 12 則需要將年加一 monthLastDay = toDay.replace(month=toDay.month+1,day=1) - dt.timedelta(1) # 獲取下個月減一天else: monthLastDay = toDay.replace(year=toDay.year+1,month=1,day=1) -dt.timedelta(1) # 獲取明年一月一號 減一天thisMonth = toDay.replace(day=1) #獲取本月一號dayList = []for i in range(monthLastDay.day): if thisMonth &lt;= monthLastDay: dayList.append(thisMonth) thisMonth += dt.timedelta(1)]]></content>
+    <content type="text"><![CDATA[获取本月的所有日期 获取本月日期获取本月一号的时间12345import datetimetoDay = datetime.date.today() #获取当前日期day = toDay.replace(year=2017,month=1,day=1) # 获取2017-1-1thisDay = toDay.replace(day=1) # 获取本月一号 获取本月月底日期12date = datetime.date.today().replace(month=toDay.month+1,day=1) #下個月一號lastDay = date-datetime.timedelta(1) # 下個月一號 減一天 日期列表1234567891011toDay = dt.date.today() #獲取日期if toDay.month &lt; 12: #如果當前月份等於 12 則需要將年加一 monthLastDay = toDay.replace(month=toDay.month+1,day=1) - dt.timedelta(1) # 獲取下個月減一天else: monthLastDay = toDay.replace(year=toDay.year+1,month=1,day=1) -dt.timedelta(1) # 獲取明年一月一號 減一天thisMonth = toDay.replace(day=1) #獲取本月一號dayList = []for i in range(monthLastDay.day): if thisMonth &lt;= monthLastDay: dayList.append(thisMonth) thisMonth += dt.timedelta(1) dateutilfrom dateutil.relativedelta import relativedelta]]></content>
       <categories>
         <category>工作問題</category>
       </categories>

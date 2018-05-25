@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="获取本月的所有日期 获取本月日期获取本月一号的时间12345import datetimetoDay = datetime.date.today() #获取当前日期day = toDay.replace(year=2017,month=1,day=1)  # 获取2017-1-1thisDay = toDay.replace(day=1) # 获取本月一号  获取本月月底日期12date = d">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-06-13T06:36:52.000Z">
+<meta property="og:updated_time" content="2018-05-23T08:40:02.963Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="获取本月日期">
 <meta name="twitter:description" content="获取本月的所有日期 获取本月日期获取本月一号的时间12345import datetimetoDay = datetime.date.today() #获取当前日期day = toDay.replace(year=2017,month=1,day=1)  # 获取2017-1-1thisDay = toDay.replace(day=1) # 获取本月一号  获取本月月底日期12date = d">
@@ -416,6 +416,7 @@
 </blockquote>
 <h2 id="获取本月月底日期"><a href="#获取本月月底日期" class="headerlink" title="获取本月月底日期"></a>获取本月月底日期</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">date = datetime.date.today().replace(month=toDay.month+<span class="number">1</span>,day=<span class="number">1</span>) <span class="comment">#下個月一號</span></div><div class="line">lastDay = date-datetime.timedelta(<span class="number">1</span>) <span class="comment"># 下個月一號 減一天</span></div></pre></td></tr></table></figure>
 <h2 id="日期列表"><a href="#日期列表" class="headerlink" title="日期列表"></a>日期列表</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">toDay = dt.date.today() <span class="comment">#獲取日期</span></div><div class="line"><span class="keyword">if</span> toDay.month &lt; <span class="number">12</span>: <span class="comment">#如果當前月份等於 12 則需要將年加一</span></div><div class="line">	monthLastDay = toDay.replace(month=toDay.month+<span class="number">1</span>,day=<span class="number">1</span>) - dt.timedelta(<span class="number">1</span>)  <span class="comment"># 獲取下個月減一天</span></div><div class="line"><span class="keyword">else</span>:</div><div class="line">	monthLastDay = toDay.replace(year=toDay.year+<span class="number">1</span>,month=<span class="number">1</span>,day=<span class="number">1</span>) -dt.timedelta(<span class="number">1</span>) <span class="comment"># 獲取明年一月一號 減一天</span></div><div class="line">thisMonth = toDay.replace(day=<span class="number">1</span>) <span class="comment">#獲取本月一號</span></div><div class="line">dayList = []</div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(monthLastDay.day):</div><div class="line">	<span class="keyword">if</span> thisMonth &lt;= monthLastDay:</div><div class="line">		dayList.append(thisMonth)</div><div class="line">	thisMonth += dt.timedelta(<span class="number">1</span>)</div></pre></td></tr></table></figure>
+<h1 id="dateutil"><a href="#dateutil" class="headerlink" title="dateutil"></a>dateutil</h1><p>from dateutil.relativedelta import relativedelta</p>
 
       
     </div>
@@ -539,7 +540,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -550,7 +551,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -561,7 +562,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -628,7 +629,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#获取本月日期"><span class="nav-number">1.</span> <span class="nav-text">获取本月日期</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取本月一号的时间"><span class="nav-number">1.1.</span> <span class="nav-text">获取本月一号的时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取本月月底日期"><span class="nav-number">1.2.</span> <span class="nav-text">获取本月月底日期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#日期列表"><span class="nav-number">1.3.</span> <span class="nav-text">日期列表</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#获取本月日期"><span class="nav-number">1.</span> <span class="nav-text">获取本月日期</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取本月一号的时间"><span class="nav-number">1.1.</span> <span class="nav-text">获取本月一号的时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取本月月底日期"><span class="nav-number">1.2.</span> <span class="nav-text">获取本月月底日期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#日期列表"><span class="nav-number">1.3.</span> <span class="nav-text">日期列表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dateutil"><span class="nav-number">2.</span> <span class="nav-text">dateutil</span></a></li></ol></div>
             
 
           </div>
@@ -648,7 +649,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
