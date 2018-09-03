@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Linux,Mysql," />
+  <meta name="keywords" content="爬虫,Python,Scrapy," />
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="mysql主(master)从(slave)复制就是一个两个mysql的同步数据的过程，主库更新后会发送更新事件到从库，从库读取更新记录并更新记录。">
-<meta name="keywords" content="Linux,Mysql">
+<meta name="description" content="学习爬虫时发现惰性加载的页面抓取起来不方便,然后就发现了这个模块。开始学习之旅-_-(本文基于python3)">
+<meta name="keywords" content="爬虫,Python,Scrapy">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Mysql 主从复制配置">
-<meta property="og:url" content="http://yoursite.com/2018/05/16/mysql主从/index.html">
+<meta property="og:title" content="selenium入门之模拟登陆">
+<meta property="og:url" content="http://yoursite.com/2018/05/18/selenium入门/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="mysql主(master)从(slave)复制就是一个两个mysql的同步数据的过程，主库更新后会发送更新事件到从库，从库读取更新记录并更新记录。">
+<meta property="og:description" content="学习爬虫时发现惰性加载的页面抓取起来不方便,然后就发现了这个模块。开始学习之旅-_-(本文基于python3)">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-05-24T05:44:27.541Z">
+<meta property="og:updated_time" content="2018-05-21T02:57:56.485Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Mysql 主从复制配置">
-<meta name="twitter:description" content="mysql主(master)从(slave)复制就是一个两个mysql的同步数据的过程，主库更新后会发送更新事件到从库，从库读取更新记录并更新记录。">
+<meta name="twitter:title" content="selenium入门之模拟登陆">
+<meta name="twitter:description" content="学习爬虫时发现惰性加载的页面抓取起来不方便,然后就发现了这个模块。开始学习之旅-_-(本文基于python3)">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/05/16/mysql主从/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/05/18/selenium入门/"/>
 
 
 
 
 
-  <title>Mysql 主从复制配置 | Hexo</title>
+  <title>selenium入门之模拟登陆 | Hexo</title>
   
 
 
@@ -321,7 +321,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/16/mysql主从/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/18/selenium入门/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Liam Li">
@@ -338,7 +338,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Mysql 主从复制配置</h1>
+          <h1 class="post-title" itemprop="name headline">selenium入门之模拟登陆</h1>
         
 
         <div class="post-meta">
@@ -350,8 +350,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-16T09:16:21+08:00">
-                2018-05-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-18T10:16:21+08:00">
+                2018-05-18
               </time>
             
 
@@ -373,8 +373,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Mysql集群/" itemprop="url" rel="index">
-                    <span itemprop="name">Mysql集群</span>
+                  <a href="/categories/筆記/" itemprop="url" rel="index">
+                    <span itemprop="name">筆記</span>
                   </a>
                 </span>
 
@@ -410,22 +410,11 @@
       
 
       
-        <p>mysql主(master)从(slave)复制就是一个两个mysql的同步数据的过程，主库更新后会发送更新事件到从库，从库读取更新记录并更新记录。<br><a id="more"></a></p>
-<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>Linux: Centos7<br>Mysql: 5.7<br>master:10.137.4.7<br>slave:10.137.4.8</p>
-<h1 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h1><h2 id="下载mysql"><a href="#下载mysql" class="headerlink" title="下载mysql"></a>下载mysql</h2><p>这里我下载的是npm<a href="https://dev.mysql.com/downloads/mysql/" target="_blank" rel="external">MySQL官网下载链接</a> </p>
-<h2 id="卸载Linux自带的Mysql"><a href="#卸载Linux自带的Mysql" class="headerlink" title="卸载Linux自带的Mysql"></a>卸载Linux自带的Mysql</h2><p>先要卸载掉已安装的mysql,不然会报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 查看已安装的mysql</div><div class="line">$rpm -qa | grep mysql  # 如果未返回则没有默认安装</div><div class="line">mysql-libs-5.1.73-5.el6_6.x86_64</div><div class="line"># 卸载</div><div class="line">$yum -y remove mysql-libs</div></pre></td></tr></table></figure></p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>需要Common、libs、client、server、devel 五个文件<br>按以上方五个文件的顺序依次安装rpm包,因为包之间的依赖关系。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$rpm -ivh mysql-community-client-5.7.22-1.el7.x86_64.rpm.rpm</div></pre></td></tr></table></figure></p>
-<p>这里可能回报错,由于Linux原因有的默认使用的数据库是mariadb(mysql 的一个分支)。按照上方的卸载方法，卸载掉就好了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$rpm -ivh mysql-community-client-5.7.22-1.el7.x86_64.rpm.rpm</div><div class="line">warning: mysql-community-common-5.7.22-1.el7.x86_64.rpm: Header V3 DSA/SHA1 Signature, key ID 5072e1f5: NOKEY</div><div class="line">Preparing...                          ################################# [100%]</div><div class="line">	file /usr/share/mysql/czech/errmsg.sys from install of mysql-community-common-5.7.22-1.el7.x86_64 conflicts with file from package mariadb-libs-1:5.5.44-2.el7.centos.x86_64</div><div class="line">	</div><div class="line">$yum -y remove mariadb-libs-1:5.5.44-2.el7.centos.x86_64</div></pre></td></tr></table></figure></p>
-<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><h2 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ firewall-cmd --state              ##查看防火墙状态</div><div class="line">running                             ##防火墙开启</div><div class="line"></div><div class="line">$ systemctl stop firewalld          ##关闭防火墙</div><div class="line"></div><div class="line">$ firewall-cmd --state</div><div class="line">not running                         ##防火墙关闭</div><div class="line"></div><div class="line">$ systemctl start firewalld.service  # 开启</div><div class="line"></div><div class="line">$ systemctl status firewalld.service #</div><div class="line">● firewalld.service - firewalld - dynamic firewall daemon</div><div class="line">   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; disabled; vendor preset: enabled)</div><div class="line">   Active: active (running) since Tue 2018-05-22 10:15:13 CST; 31min ago</div><div class="line">     Docs: man:firewalld(1)</div><div class="line"> Main PID: 9422 (firewalld)</div><div class="line">   CGroup: /system.slice/firewalld.service</div><div class="line">           └─9422 /usr/bin/python -Es /usr/sbin/firewalld --nofork --nopid</div></pre></td></tr></table></figure>
-<h2 id="修改mysql配置文件"><a href="#修改mysql配置文件" class="headerlink" title="修改mysql配置文件"></a>修改mysql配置文件</h2><p>主从服务器都要配置,server_id为唯一的不可重复<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$vi /etc/my.cnf</div><div class="line">[mysqld]</div><div class="line">log-bin=mysql-bin  </div><div class="line">server_id=128</div><div class="line">binlog-ignore-db = mysql</div><div class="line">binlog-ignore-db = information_schema</div><div class="line">binlog-ignore-db = performance_schema</div><div class="line">replicate-wild-ignore-table = mysql.%replicate-wild-igno</div><div class="line"></div><div class="line">#退出后重启</div><div class="line">$service mysqld restart</div></pre></td></tr></table></figure></p>
-<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><h3 id="master-10-137-4-7"><a href="#master-10-137-4-7" class="headerlink" title="master(10.137.4.7)"></a>master(10.137.4.7)</h3><p>创建用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">#查看临时密码</div><div class="line">$ grep password /var/log/mysqld.log</div><div class="line">2018-05-15T05:46:03.804945Z 1 [Note] A temporary password is generated for root@localhost: iAegj2o.4J70</div><div class="line"></div><div class="line">#登陆mysql</div><div class="line">$ mysql -p</div><div class="line">:iAegj2o.4J70</div><div class="line"></div><div class="line"># 修改root密码</div><div class="line">mysql&gt; set password = password(&quot;Liam123!&quot;);</div><div class="line">Query OK, 0 rows affected, 1 warning (0.00 sec)</div><div class="line"></div><div class="line"></div><div class="line"># 创建账号</div><div class="line">mysql&gt; create user &apos;test1&apos;@&apos;10.137.4.8&apos; identified by &apos;Liam123!&apos;;</div><div class="line"></div><div class="line"># 赋予 REPLICATION SLAVE 权限</div><div class="line">mysql&gt; grant replication slave on *.* to &apos;test&apos;@&apos;10.137.4.8&apos;;</div><div class="line"></div><div class="line">## 查看用户</div><div class="line">mysql&gt; select user,host from mysql.user;</div><div class="line"></div><div class="line">## 查看 master 状态</div><div class="line">mysql&gt; show master status;</div><div class="line">+------------------+----------+--------------+---------------------------------------------+-------------------+</div><div class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB                            | Executed_Gtid_Set |</div><div class="line">+------------------+----------+--------------+---------------------------------------------+-------------------+</div><div class="line">| mysql-bin.000025 |      860 |              | mysql,information_schema,performance_schema |                   |</div><div class="line">+------------------+----------+--------------+---------------------------------------------+-------------------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure></p>
-<p>拷贝master数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ mysqldump -u root -p --all-databases --master-data &gt; all.sql</div></pre></td></tr></table></figure></p>
-<h3 id="slave-10-137-4-8"><a href="#slave-10-137-4-8" class="headerlink" title="slave(10.137.4.8)"></a>slave(10.137.4.8)</h3><p>将all.sql拷贝到 slave 下执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ mysql -uroot -p &lt; all.sql</div></pre></td></tr></table></figure></p>
-<p>建立主从连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div></pre></td><td class="code"><pre><div class="line">mysql&gt; change master to</div><div class="line">    -&gt; master_host=&apos;10.137.4.7&apos;,</div><div class="line">    -&gt; master_user=&apos;test&apos;,</div><div class="line">    -&gt; master_password=&apos;Liam123!&apos;,</div><div class="line">    -&gt; master_log_file=&apos;mysql-bin.000025&apos;, # 主服务master 状态中获取</div><div class="line">    -&gt; master_log_pos=860;   # 主服务master 状态中获取</div><div class="line">    </div><div class="line">mysql&gt; start slave;  # 开启同步</div><div class="line"></div><div class="line">mysql&gt; show slave status \G  # 查看同步配置信息</div><div class="line"></div><div class="line">*************************** 1. row ***************************</div><div class="line">               Slave_IO_State: Waiting for master to send event</div><div class="line">                  Master_Host: 10.137.4.7</div><div class="line">                  Master_User: test</div><div class="line">                  Master_Port: 3306</div><div class="line">                Connect_Retry: 60</div><div class="line">              Master_Log_File: mysql-binlog.000025</div><div class="line">          Read_Master_Log_Pos: 860</div><div class="line">               Relay_Log_File: foc-lh-dbs-mysql1-relay-bin.000002</div><div class="line">                Relay_Log_Pos: 1024</div><div class="line">        Relay_Master_Log_File: mysql-binlog.000025</div><div class="line">             Slave_IO_Running: Yes</div><div class="line">            Slave_SQL_Running: Yes</div><div class="line">              Replicate_Do_DB: </div><div class="line">          Replicate_Ignore_DB: </div><div class="line">           Replicate_Do_Table: </div><div class="line">       Replicate_Ignore_Table: </div><div class="line">      Replicate_Wild_Do_Table: </div><div class="line">  Replicate_Wild_Ignore_Table: mysql.%replicate-wild-igno</div><div class="line">                   Last_Errno: 0</div><div class="line">                   Last_Error: </div><div class="line">                 Skip_Counter: 0</div><div class="line">          Exec_Master_Log_Pos: 860</div><div class="line">              Relay_Log_Space: 1243</div><div class="line">              Until_Condition: None</div><div class="line">               Until_Log_File: </div><div class="line">                Until_Log_Pos: 0</div><div class="line">           Master_SSL_Allowed: No</div><div class="line">           Master_SSL_CA_File: </div><div class="line">           Master_SSL_CA_Path: </div><div class="line">              Master_SSL_Cert: </div><div class="line">            Master_SSL_Cipher: </div><div class="line">               Master_SSL_Key: </div><div class="line">        Seconds_Behind_Master: 0</div><div class="line">Master_SSL_Verify_Server_Cert: No</div><div class="line">                Last_IO_Errno: 0</div><div class="line">                Last_IO_Error: </div><div class="line">               Last_SQL_Errno: 0</div><div class="line">               Last_SQL_Error: </div><div class="line">  Replicate_Ignore_Server_Ids: </div><div class="line">             Master_Server_Id: 1</div><div class="line">                  Master_UUID: f303ed33-5815-11e8-b557-fa163ee5f93f</div><div class="line">             Master_Info_File: /var/lib/mysql/master.info</div><div class="line">                    SQL_Delay: 0</div><div class="line">          SQL_Remaining_Delay: NULL</div><div class="line">      Slave_SQL_Running_State: Slave has read all relay log; waiting for more updates</div><div class="line">           Master_Retry_Count: 86400</div><div class="line">                  Master_Bind: </div><div class="line">      Last_IO_Error_Timestamp: </div><div class="line">     Last_SQL_Error_Timestamp: </div><div class="line">               Master_SSL_Crl: </div><div class="line">           Master_SSL_Crlpath: </div><div class="line">           Retrieved_Gtid_Set: </div><div class="line">            Executed_Gtid_Set: </div><div class="line">                Auto_Position: 0</div><div class="line">         Replicate_Rewrite_DB: </div><div class="line">                 Channel_Name: </div><div class="line">           Master_TLS_Version: </div><div class="line">1 row in set (0.01 sec</div></pre></td></tr></table></figure></p>
-<blockquote>
-<p>ps: Slave_IO_Running,Slave_SQL_Running 都要为Yes,如果错误则查看Last_IO_Error中的错误.   </p>
-</blockquote>
-<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>检查是否成功。在master下新建库和表，看下是否在slave下出现. </p>
+        <p>学习爬虫时发现惰性加载的页面抓取起来不方便,然后就发现了这个模块。开始学习之旅-_-(本文基于python3)<br><a id="more"></a></p>
+<h1 id="安装selenium"><a href="#安装selenium" class="headerlink" title="安装selenium"></a>安装selenium</h1><p>直接pip安装就好，selenium3 貌似已经不支持phantomjs(可能我安装有问题,不要在意细节…)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">$ pip install selenium</div></pre></td></tr></table></figure></p>
+<h1 id="下载Chromedriver"><a href="#下载Chromedriver" class="headerlink" title="下载Chromedriver"></a>下载Chromedriver</h1><p>直接贴网站了——————&gt;<a href="http://npm.taobao.org/mirrors/chromedriver/" target="_blank" rel="external">地址</a></p>
+<p>下载后放到python目录下就可以了</p>
+<h1 id="登陆"><a href="#登陆" class="headerlink" title="登陆"></a>登陆</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">options = webdriver.ChromeOptions()</div><div class="line">   options.add_experimental_option(&quot;excludeSwitches&quot;, [&quot;ignore-certificate-errors&quot;])</div><div class="line">   options.add_argument(&apos;--user-data-dir=C:/Users/liam/AppData/Local/Google/Chrome/User Data/Default&apos;)</div><div class="line">   driver = webdriver.Chrome(chrome_options=options)</div><div class="line">   url = &apos;http://lo/login/&apos;</div><div class="line">   driver.get(url)</div><div class="line">   driver.find_element_by_name(&quot;username&quot;).send_keys(&quot;username&quot;)  # 文本框的名字</div><div class="line">   driver.find_element_by_name(&quot;password&quot;).send_keys(&quot;password&quot;)</div><div class="line">   driver.find_element_by_xpath(&quot;//button[@class=&apos;btn btn-default submitButton&apos;]&quot;).click()</div><div class="line">   time.sleep(5)</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -443,9 +432,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Linux/" rel="tag"># Linux</a>
+            <a href="/tags/爬虫/" rel="tag"># 爬虫</a>
           
-            <a href="/tags/Mysql/" rel="tag"># Mysql</a>
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/Scrapy/" rel="tag"># Scrapy</a>
           
         </div>
       
@@ -458,8 +449,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/05/16/mysql多主一从/" rel="next" title="Mysql 多主一从搭建">
-                <i class="fa fa-chevron-left"></i> Mysql 多主一从搭建
+              <a href="/2018/05/16/scrapy/" rel="next" title="Scrapy 碰壁汇总">
+                <i class="fa fa-chevron-left"></i> Scrapy 碰壁汇总
               </a>
             
           </div>
@@ -468,8 +459,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/05/16/mysql主主同步/" rel="prev" title="Mysql 互为主从搭建">
-                Mysql 互为主从搭建 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/09/03/mysql导出命令/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -640,7 +631,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#环境"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装mysql"><span class="nav-number">2.</span> <span class="nav-text">安装mysql</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#下载mysql"><span class="nav-number">2.1.</span> <span class="nav-text">下载mysql</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#卸载Linux自带的Mysql"><span class="nav-number">2.2.</span> <span class="nav-text">卸载Linux自带的Mysql</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">2.3.</span> <span class="nav-text">安装</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置"><span class="nav-number">3.</span> <span class="nav-text">配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#关闭防火墙"><span class="nav-number">3.1.</span> <span class="nav-text">关闭防火墙</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改mysql配置文件"><span class="nav-number">3.2.</span> <span class="nav-text">修改mysql配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主从复制"><span class="nav-number">3.3.</span> <span class="nav-text">主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#master-10-137-4-7"><span class="nav-number">3.3.1.</span> <span class="nav-text">master(10.137.4.7)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#slave-10-137-4-8"><span class="nav-number">3.3.2.</span> <span class="nav-text">slave(10.137.4.8)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#测试"><span class="nav-number">4.</span> <span class="nav-text">测试</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装selenium"><span class="nav-number">1.</span> <span class="nav-text">安装selenium</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下载Chromedriver"><span class="nav-number">2.</span> <span class="nav-text">下载Chromedriver</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#登陆"><span class="nav-number">3.</span> <span class="nav-text">登陆</span></a></li></ol></div>
             
 
           </div>
